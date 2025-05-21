@@ -1,0 +1,94 @@
+// Project: Employee Payroll Management System (PostgreSQL)//
+
+Create database Payroll_DB
+
+// Create a table employees //
+
+Create Table employees(
+    EMPLOYEE_ID int Primary key,
+    NAME TEXT,
+    DEPARTMENT TEXT,
+    EMAIL TEXT,
+    PHONE_NO NUMERIC,
+    JOINING_DATE DATE,
+    SALARY NUMERIC,
+    BONUS NUMERIC,
+    TAX_PERCENTAGE NUMERIC
+);
+
+INSERT INTO employees VALUES
+(1, 'Akash', 'Sales', 'Akash@amazon.com', 1234567890, '2024-12-10', 80000, 10000, 15),
+(2, 'Varun', 'IT', 'Varun@amazon.com', 1234567891, '2023-07-01', 90000, 5000, 18),
+(3, 'Arun', 'HR', 'Arun@amazon.com', 1234567892, '2023-11-15', 70000, 3000, 12),
+(4, 'Deepak', 'Finance', 'Deepak@amazon.com', 1234567893, '2025-01-20', 95000, 7000, 20),
+(5, 'Alin', 'Sales', 'Alin@amazon.com', 1234567894, '2023-08-05', 60000, 5000, 10),
+(6, 'Neha', 'IT', 'Neha@amazon.com', 1234567895, '2022-04-25', 100000, 8000, 22),
+(7, 'Rajat', 'Finance', 'Rajat@amazon.com', 1234567896, '2024-11-01', 87000, 4000, 17),
+(8, 'Tom', 'Sales', 'Tom@amazon.com', 1234567897, '2025-02-28', 85000, 6000, 16),
+(9, 'Yash', 'IT', 'Yash@amazon.com', 1234567898, '2023-10-10', 92000, 3000, 19),
+(10, 'Ankit', 'HR', 'Ankit@amazon.com', 1234567899, '2024-06-01', 76000, 2000, 14);
+
+Select * From employees
+
+// Retrieve the list of employees sorted by salary in descending order //
+
+Select * from employees
+order by salary desc;
+
+// Find employees with a total compensation (SALARY + BONUS) greater than 
+$100,000 //
+
+Select *, (Salary + Bonus) As Total_compensation
+from employees
+Where (Salary + Bonus) > 100000;
+
+// Update the bonus for employees in the ‘Sales’ department by 10% //
+
+Update employees 
+set Bonus = Bonus * 1.10
+Where Department = 'sales';
+
+// Calculate the net salary after deducting tax for all employees //
+
+SELECT EMPLOYEE_ID, NAME, SALARY, BONUS, TAX_PERCENTAGE,
+    (SALARY + BONUS) * (1 - TAX_PERCENTAGE / 100.0) AS NET_SALARY
+FROM employees;
+
+// Retrieve the average, minimum, and maximum salary per department //
+
+SELECT 
+    DEPARTMENT,
+    ROUND(AVG(SALARY), 2) AS AVG_SALARY,
+    MIN(SALARY) AS MIN_SALARY,
+    MAX(SALARY) AS MAX_SALARY
+FROM employees
+GROUP BY DEPARTMENT;
+
+// Advanced Queries: //
+// Retrieve employees who joined in the last 6 months //
+
+SELECT *
+FROM employees
+WHERE JOINING_DATE >= CURRENT_DATE - INTERVAL '6 months';
+
+// Group employees by department and count how many employees each has //
+
+SELECT DEPARTMENT, COUNT(*) AS EMPLOYEE_COUNT
+FROM employees
+GROUP BY DEPARTMENT;
+
+// Find the department with the highest average salary //
+
+SELECT DEPARTMENT, AVG(SALARY) AS AVERAGE_SALARY
+FROM employees
+GROUP BY DEPARTMENT;
+
+// Identify employees who have the same salary as at least one other employee //
+
+SELECT * FROM employees
+WHERE SALARY IN (
+    SELECT SALARY
+    FROM employees
+    GROUP BY SALARY
+    HAVING COUNT(*) > 1);
+
